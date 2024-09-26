@@ -1,0 +1,70 @@
+# name: production-apply
+
+# on:
+#   push:
+#     branches:
+#       - main
+# jobs:
+#   Production_Apply:
+#     name: Production Terraform Apply
+#     environment: production
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: cancel previous runs
+#       uses: styfle/cancel-workflow-action@0.5.0
+#       with:
+#         access_token: ${{ github.token }}
+
+#     - name: checkout
+#       uses: actions/checkout@v2
+    
+#     - name: Setup Terraform
+#       uses: hashicorp/setup-terraform@v1
+#       with:
+#         terraform_version: 1.1.2
+
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-region: us-east-1
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+#     - name: Initialize Terraform
+#       run: |
+#         cd environments/production
+#         terraform init -input=false
+
+#     - name: Check configuration files on secrets
+#       run: |
+#         npm install -g json-diff
+#         chmod +x ./tooling/secret-validator/validate-secrets.sh
+#         ./tooling/secret-validator/validate-secrets.sh production  
+        
+#     - name: Plan Terraform
+#       run: |
+#         cd environments/production
+#         terraform plan -input=false
+
+
+#     - name: Sleep for 60 seconds
+#       run: sleep 60s
+#       shell: bash
+
+  
+#     - name: Apply Terraform
+#       run: |
+#         cd environments/production
+#         terraform apply -input=false -auto-approve
+
+
+#     - name: Slack Notification
+#       uses: 8398a7/action-slack@v3
+#       with:
+#         job_name: CloudOps Infra Production Deployment
+#         status: ${{ job.status }}
+#         fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+#       env:
+#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#       if: always()
