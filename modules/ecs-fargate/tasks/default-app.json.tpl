@@ -2,7 +2,7 @@
    {
       "name": "${project}-${environment}",
       "image": "${image}",
-      "cpu": "${cpu}",
+      "cpu": ${cpu},
       "healthCheck": {
          "command": ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://0.0.0.0:${container_port}/ || exit 1"],
          "retries": 3,

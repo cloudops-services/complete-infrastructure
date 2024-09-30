@@ -1,6 +1,4 @@
-# -------- NLB BASTION HOST --------
 
-# * nlb security group *
 resource "aws_security_group" "nlb_main_security_group" {
   name        = "${var.project}-${var.environment}-nlb-sg"
   description = "${var.project}-${var.environment}-nlb security group"
@@ -26,7 +24,6 @@ resource "aws_security_group" "nlb_main_security_group" {
 
 }
 
-# * nlb resource *
 resource "aws_lb" "networking-env-nlb" {
   name            = "bastion-${var.environment}-nlb"
   internal        = false
@@ -39,7 +36,6 @@ resource "aws_lb" "networking-env-nlb" {
   }
 }
 
-# * nlb target group *
 resource "aws_lb_target_group" "networking_env_target_group_nlb" {
   name        = "${var.project}-${var.environment}-tg-nlb"
   protocol    = "TCP"
@@ -55,14 +51,12 @@ resource "aws_lb_target_group" "networking_env_target_group_nlb" {
   }
 }
 
-# * aws_lb_target_group_attachment * 
 resource "aws_lb_target_group_attachment" "nlb_attachment" {
   target_group_arn = aws_lb_target_group.networking_env_target_group_nlb.arn
   target_id        = aws_instance.bastion-instance.id
   depends_on       = [aws_lb_target_group.networking_env_target_group_nlb]
 }
 
-# * listener nlb *
 resource "aws_lb_listener" "bastion_host" {
   load_balancer_arn = aws_lb.networking-env-nlb.arn
   port              = "22"
@@ -74,10 +68,9 @@ resource "aws_lb_listener" "bastion_host" {
   }
 }
 
-# * nlb DNS record *
 resource "aws_route53_record" "secure_bastion" {
-  zone_id          = var.environment != "production" ? "Z06239213LRMVY1UUCD5N" : "Z0704072159QO7ED5QR3N"
-  name             = var.environment != "production" ? "securebastion.${var.environment}.poweredbytandym.com" : "securebastion.bytandym.com"
+  zone_id          = var.environment != "production" ? "EXAMPLE_ZONE_ID_NOPROD" : "EXAMPLE_ZONE_ID_PROD"
+  name             = var.environment != "production" ? "securebastion.${var.environment}.cloudops.com" : "securebastion.cloudops.com"
   type    = "A"
 
   alias {

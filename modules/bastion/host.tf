@@ -14,7 +14,7 @@ resource "aws_secretsmanager_secret_version" "bastion-key-version" {
 resource "aws_instance" "bastion-instance" {
   ami           = "ami-0c2b8ca1dad447f8a"
   instance_type = "t2.micro"
-  #subnet_id                   = aws_subnet.fanalyst-dev-public-subnet-us-east-1a.id
+
   subnet_id                   = var.subnet_id
   associate_public_ip_address = true
   key_name                    = "${var.project}-${var.environment}-bastion"

@@ -60,7 +60,7 @@ resource "aws_db_instance" "rds_application_instance" {
   parameter_group_name                = "default.mysql8.0"
   skip_final_snapshot                 = true
   iam_database_authentication_enabled = true
-  final_snapshot_identifier           = "tandym-${var.project}-${var.environment}"
+  final_snapshot_identifier           = "cloudops-${var.project}-${var.environment}"
   vpc_security_group_ids              = ["${aws_security_group.allow_vpc_traffic.id}"]
   db_subnet_group_name                = aws_db_subnet_group.rds_db_application_subnet.id
   multi_az                            = var.multi_az
@@ -75,9 +75,5 @@ resource "aws_db_instance" "rds_application_instance" {
   storage_encrypted                   = var.encryption_enabled
   tags = {
     ManagedBy = "${var.maintainer}-terraform"
-  }
-
-  lifecycle {
-    ignore_changes = [allocated_storage, username,deletion_protection, replicas,password,backup_retention_period,maintenance_window,backup_window,engine_version,instance_class,max_allocated_storage,performance_insights_enabled,monitoring_interval,apply_immediately,multi_az,enabled_cloudwatch_logs_exports,final_snapshot_identifier]
   }
 }

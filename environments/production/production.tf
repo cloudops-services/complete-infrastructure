@@ -1,9 +1,9 @@
-# VPC
+
 module "production_vpc" {
   source = "../../modules/vpc"
   vpc_cidr_block = "172.16.0.0/16"
-  public_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]
-  private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
+  public_subnet_cidrs = ["172.16.1.0/24", "172.16.2.0/24"]
+  private_subnet_cidrs = ["172.16.3.0/24", "172.16.4.0/24"]
   availability_zones = ["us-east-1a", "us-east-1b"]
   name = "production-vpc"
   tags = {
@@ -19,7 +19,6 @@ module "production_bastion_host" {
   vpc_id      = module.production_vpc.vpc_id
   subnet_id   = module.production_vpc.public_subnets[0]
   public_subnets = module.production_vpc.public_subnets
-
 
   depends_on = [
     module.production_vpc
@@ -79,16 +78,16 @@ module "production_redis" {
 
 
 module "production_ecs_fargate" {
-  maintainer               = "tandym"
+  maintainer               = "cloudops"
   source                   = "../../modules/ecs-fargate"
-  app_domain_name          = "bytandym.com"
+  app_domain_name          = "cloudops.com"
   project                  = "api"
   environment              = "production"
   container_port_api       = "8080"
   container_port_backend   = "9090"
   vpc_id                   = module.production_vpc.vpc_id
   vpc_cidr                 = module.production_vpc.vpc_cidr_block
-  api_image                = "782993620179.dkr.ecr.us-east-1.amazonaws.com/api-production-fargate:latest"
+  api_image                = "example.dkr.ecr.us-east-1.amazonaws.com/api-production-fargate:latest"
   private_subnets          = module.production_vpc.private_subnets
   public_subnets           = module.production_vpc.public_subnets
   depends_on               = [module.production_vpc]
