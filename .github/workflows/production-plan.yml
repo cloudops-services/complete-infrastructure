@@ -1,0 +1,44 @@
+name: production-plan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Terraform_Plan:
+    name: Production Terraform Plan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [production]
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_ROLE_NAME
+        aws-region: us-east-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.1.2
+
+    - name: Initialize Terraform
+      run: |
+        cd environments/production
+        terraform init -input=false
+        
+    - name: Plan Terraform
+      run: |
+        cd environments/production
+        terraform plan -input=false
+
+    - name: Check configuration files on secrets
+      run: |
+        npm install -g json-diff
+        chmod +x ./tooling/secret-validator/validate-secrets.sh
+        ./tooling/secret-validator/validate-secrets.sh production  
